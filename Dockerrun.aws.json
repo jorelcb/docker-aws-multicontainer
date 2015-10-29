@@ -1,0 +1,54 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "volumes": [
+    {
+      "name": "www",
+      "host": {
+        "sourcePath": "/var/app/current/www"
+      }
+    },
+    {
+      "name": "data",
+      "host": {
+        "sourcePath": "/var/app/current/data"
+      }
+    }  
+  ],
+  "containerDefinitions": [
+    {
+      "name": "phpfpm",
+      "image": "jorelcb/phpfpm",
+      "essential": true,
+      "memory": 128,
+      "mountPoints": [
+         {
+          "sourceVolume": "www",
+          "containerPath": "/srv/www",
+          "readOnly": false
+        }
+      ]
+    },
+    {
+      "name": "nginx",
+      "image": "jorelcb/nginx",
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": [
+        "phpfpm"
+      ],
+      "mountPoints": [
+         {
+          "sourceVolume": "www",
+          "containerPath": "/srv/www",
+          "readOnly": false
+        }
+      ]
+    }
+  ]
+}
